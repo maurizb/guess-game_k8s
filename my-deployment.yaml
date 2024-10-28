@@ -19,7 +19,7 @@ spec:
         image: nginx:1.27 
         ports:
         - containerPort: 80
-      #backend container
+      # backend container
       - name: backend-container
         image: backend:1.0
         ports:
@@ -27,11 +27,27 @@ spec:
         env:
         - name: FLASK_DB_HOST
           value: database
-      #database container
-      
-      
+      # database container
+      # - name: database-container
+      #   image: postgres
+      #   ports:
+      #   - containerPort: 5432
+      #   env:
+      #   - name: POSTGRES_PASSWORD
+      #     value: secretpass
+      #   volumeMounts:
+      #   - name: my-db-backup
+      #     mountPath: /var/lib/postgresql/data
+      # define restart policy para todos containers
+      restartPolicy: Always
+  # estratégia de rollout
   strategy:
     type: RollingUpdate
     rollingUpdate:
       maxUnavailable: 1
       maxSurge: 1
+
+  # define volumes
+  #volumes:
+  #- name: my-db-backup
+  #  emptyDir: {}

@@ -1,3 +1,4 @@
+#deployment, criar um serviço???
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -21,23 +22,27 @@ spec:
         - containerPort: 80
       # backend container
       - name: backend-container
-        image: backend:1.0
+        image: python:3.9-slim
         ports:
         - containerPort: 5000
         env:
         - name: FLASK_DB_HOST
           value: database
       # database container
-      # - name: database-container
-      #   image: postgres
-      #   ports:
-      #   - containerPort: 5432
-      #   env:
-      #   - name: POSTGRES_PASSWORD
-      #     value: secretpass
-      #   volumeMounts:
-      #   - name: my-db-backup
-      #     mountPath: /var/lib/postgresql/data
+      - name: database-container
+        image: postgres
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_PASSWORD
+          value: secretpass
+        volumeMounts:
+        - name: my-db-backup
+          mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: my-db-backup
+        persistentVolumeClaim:
+          claimName: my-db-backup
       # define restart policy para todos containers
       restartPolicy: Always
   # estratégia de rollout
@@ -47,7 +52,31 @@ spec:
       maxUnavailable: 1
       maxSurge: 1
 
-  # define volumes
-  #volumes:
-  #- name: my-db-backup
-  #  emptyDir: {}
+---
+#define volumes
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: my-db-backup
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+#service
+#apiVersion: v1
+#Kind: Service
+#metadata:
+#  name: myapp-service
+#  labels:
+#    app: myapp
+#spec:
+#  selector:
+#    app: myapp
+#  ports:
+#    - protocol: TCP
+#      port: 80
+#      targetPort: 80
+#  type: LoadBalancer

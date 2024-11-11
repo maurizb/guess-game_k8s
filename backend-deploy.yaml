@@ -14,10 +14,11 @@ spec:
         version: "v1.0"
     spec:
       containers:
-        - name: backend-container
-          image: maurizb/guess-game-k8s-backend:latest .
-          ports:
-          - containerPort: 5000
-          env:
-          - name: FLASK_DB_HOST
-            value: database
+        #backend container
+      - name: backend-container
+        image: maurizb/guess-game-k8s-backend:latest .
+        ports:
+        - containerPort: 5000
+        env:
+        - name: FLASK_DB_HOST
+          value: database

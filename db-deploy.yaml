@@ -15,6 +15,7 @@ spec:
         version: "v1.0"
     spec:
       containers: 
+      #db container
       - name: database-container
         image: postgres
         ports:

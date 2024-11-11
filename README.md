@@ -12,7 +12,7 @@ Antes de começar, certifique-se de que você tem as seguintes ferramentas insta
 
 ## Funcionalidades
 
-Utilizamos **Docker Compose** para criar múltiplos containers de backend para balanceamento. O objetivo é distribuir as requisições entre diferentes instâncias do backend.
+Utilizamos **Kubernetes** para criar múltiplos containers de backend para balanceamento. O objetivo é distribuir as requisições entre diferentes instâncias do backend.
 
 ## Instalação
 
@@ -21,38 +21,22 @@ Siga os passos abaixo para instalar e rodar o projeto em sua máquina:
 ### 1. Clone o repositório
 
 ```bash
-git clone https://github.com/maurizb/trabalhodocker2.git
-cd trabalhodocker2
+git clone https://github.com/maurizb/guess-game_k8s.git
+cd guess-game_k8s
 ```
 
-### 2. Verifique e ajuste as configurações
-
-O arquivo `docker-compose.yml` e o arquivo de configuração do Nginx (`nginx.conf`) já estão configurados para o balanceamento de carga (**NÃO IMPLEMENTADO**).
-
-- O `docker-compose.yml` define dois containers de backend (`backend1` e `backend2`) rodando a mesma aplicação. (**NO MOMENTO APENAS UM**).
-- O arquivo `nginx.conf` define a configuração do proxy reverso para distribuir as requisições entre os containers.
-
-Se quiser, ajuste as configurações de portas, número de containers, ou outras variáveis.
-
-### 3. Rodar o projeto
+### 2. Rodar o projeto
 
 Para rodar o projeto, utilize o seguinte comando:
 
 ```bash
-docker-compose up --build
+kubectl apply -f frontend-deployment.yaml
+kubectl apply -f backend-deployment.yaml
+kubectl apply -f db-deployment.yaml
 ```
 
 Isso irá construir as imagens e subir os containers do jogo. A aplicação estará disponível em [http://localhost](http://localhost).
 
-### 4. Escalar o backend (opcional)
-
-Se você quiser aumentar o número de containers backend rodando o jogo, pode usar o seguinte comando para escalar:
-
-```bash
-docker-compose up --scale backend1=3 --scale backend2=3
-```
-
-Isso criará mais instâncias dos containers de backend, e o Nginx irá balancear a carga entre eles.
 
 ## Como Jogar
 
@@ -66,7 +50,9 @@ Isso criará mais instâncias dos containers de backend, e o Nginx irá balancea
 Para parar todos os containers e excluir os volumes, executar:
 
 ```bash
-docker compose down --volumes
+kubectl delete deployment front-deployment
+kubectl delete deployment backend-deployment
+kubectl delete deployment db-deployment
 ```
 
 Isso irá desligar e remover todos os containers criados.
@@ -91,11 +77,5 @@ O **Nginx** foi escolhido para desempenhar o papel de proxy reverso e balanceado
 - **Balanceamento de carga**: Distribui as requisições entre múltiplos containers backend, garantindo que nenhum deles seja sobrecarregado, o que melhora a performance e resiliência.
 
 Utilizei o bloco `upstream` no arquivo `default.conf` do nginx para definir múltiplos servidores backend, facilitando o balanceamento de carga entre eles. O Nginx distribui as requisições de maneira circular por padrão entre os servidores backend (fonte: https://medium.com/@aedemirsen/load-balancing-with-docker-compose-and-nginx-b9077696f624).
-
-A aplicação foi projetada para ser **escalável horizontalmente**, adicionando mais containers de backend conforme necessário. Isso é feito através do Docker Compose com um comando simples:
-
-```bash
-docker-compose up --scale backend1=3 --scale backend2=3
-```
 
 Essa flexibilidade permite que a aplicação lide com aumentos de tráfego sem comprometer a performance.

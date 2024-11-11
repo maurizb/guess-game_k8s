@@ -30,9 +30,9 @@ cd guess-game_k8s
 Para rodar o projeto, utilize o seguinte comando:
 
 ```bash
-kubectl apply -f frontend-deployment.yaml
-kubectl apply -f backend-deployment.yaml
-kubectl apply -f db-deployment.yaml
+kubectl apply -f frontend-deploy.yaml
+kubectl apply -f backend-deploy.yaml
+kubectl apply -f db-deploy.yaml
 ```
 
 Isso irá construir as imagens e subir os containers do jogo. A aplicação estará disponível em [http://localhost](http://localhost).

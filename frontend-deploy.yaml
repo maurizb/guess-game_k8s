@@ -1,0 +1,44 @@
+#deployment, criar um serviço
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: front-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+        version: "v1.0"
+    spec:
+      containers:
+      #frontend container
+      - name: frontend-container
+        image: maurizb/guess-game-k8s-frontend:latest .
+        ports:
+        - containerPort: 80
+  # estratégia de rollout
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+---
+#service
+#apiVersion: v1
+#Kind: Service
+#metadata:
+#  name: myapp-service
+#  labels:
+#    app: myapp
+#spec:
+#  selector:
+#    app: myapp
+#  ports:
+#    - protocol: TCP
+#      port: 80
+#      targetPort: 80
+#  type: LoadBalancer

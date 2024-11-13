@@ -15,10 +15,25 @@ spec:
     spec:
       containers:
         #backend container
-      - name: backend-container
-        image: maurizb/guess-game-k8s-backend:latest .
-        ports:
-        - containerPort: 5000
-        env:
-        - name: FLASK_DB_HOST
-          value: database
+        - name: backend-container
+          image: maurizb/guess-game-k8s-backend:latest
+          ports:
+          - containerPort: 5000
+          env:
+          - name: FLASK_DB_HOST
+            value: database
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+  labels:
+    app: backend-service
+spec:
+  selector:
+    app: backend-service
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+  type: LoadBalancer

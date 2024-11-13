@@ -7,8 +7,7 @@ Este projeto é um jogo multiplayer simples rodando em containers Docker. O joga
 
 Antes de começar, certifique-se de que você tem as seguintes ferramentas instaladas:
 
-- [Docker](https://docs.docker.com/get-docker/)
-- [Docker Compose](https://docs.docker.com/compose/install/)
+- [Docker Desktop](https://docs.docker.com/get-docker/)
 
 ## Funcionalidades
 
@@ -27,7 +26,7 @@ cd guess-game_k8s
 
 ### 2. Rodar o projeto
 
-Para rodar o projeto, utilize o seguinte comando:
+Para rodar o projeto, tenha o Docker Desktop aberto e certifique-se que a opção de "enable Kubernetes" está ativa. Utilize então os seguintes comandos:
 
 ```bash
 kubectl apply -f frontend-deploy.yaml
@@ -35,7 +34,7 @@ kubectl apply -f backend-deploy.yaml
 kubectl apply -f db-deploy.yaml
 ```
 
-Isso irá construir as imagens e subir os containers do jogo. A aplicação estará disponível em [http://localhost](http://localhost).
+Isso irá subir os containers do jogo. A aplicação estará disponível em [http://localhost](http://localhost).
 
 
 ## Como Jogar
@@ -60,22 +59,13 @@ Isso irá desligar e remover todos os containers criados.
 
 # Decisões de Design da Aplicação
 
-O foco foi em criar uma aplicação escalável, eficiente e fácil de manter, utilizando Docker, Docker Compose e Nginx para balanceamento de carga.
+O foco foi em criar uma aplicação escalável, eficiente e fácil de manter, utilizando Kubernetes para balanceamento de carga.
 
-- **Isolamento**: Cada serviço (backend e proxy) é isolado em seu próprio container, evitando conflitos de dependências e facilitando o gerenciamento. As placas de rede também são isoladas (fora o necessário para comunicação).
+- **Isolamento**: Cada serviço (backend e proxy) é isolado em seu próprio container, evitando conflitos de dependências e facilitando o gerenciamento. 
 - **Portabilidade**: Os containers garantem que a aplicação rodará da mesma maneira em qualquer ambiente, seja de desenvolvimento, testes ou produção, sem dependências externas além do Docker.
 - **Escalabilidade**: Com o Docker, é fácil aumentar o número de instâncias de qualquer serviço, permitindo escalar a aplicação horizontalmente conforme a demanda. Foram usados 2 backends por padrão no docker-compose.yml (backend1 e backend2).
 
-Utilizamos o Docker Compose para **orquestrar** os containers. Ele facilita a definição, deploy e gerenciamento dos serviços da aplicação em um único arquivo (`docker-compose.yml`).
+Utilizei o Kubernetes para **orquestrar** os containers. Ele facilita a definição, deploy e gerenciamento dos serviços da aplicação.
 
 - **Multicontainers**: A aplicação utiliza múltiplos containers de backend, e o Docker Compose coordena a criação e conexão desses containers com outros serviços, como o Nginx.
 - **Redundância**: O uso de múltiplos containers backend permite redundância, melhorando a resiliência e disponibilidade.
-
-O **Nginx** foi escolhido para desempenhar o papel de proxy reverso e balanceador de carga.
-
-- **Proxy reverso**: O Nginx recebe todas as requisições e as redireciona para os backends, mantendo a arquitetura modular e protegendo os serviços internos.
-- **Balanceamento de carga**: Distribui as requisições entre múltiplos containers backend, garantindo que nenhum deles seja sobrecarregado, o que melhora a performance e resiliência.
-
-Utilizei o bloco `upstream` no arquivo `default.conf` do nginx para definir múltiplos servidores backend, facilitando o balanceamento de carga entre eles. O Nginx distribui as requisições de maneira circular por padrão entre os servidores backend (fonte: https://medium.com/@aedemirsen/load-balancing-with-docker-compose-and-nginx-b9077696f624).
-
-Essa flexibilidade permite que a aplicação lide com aumentos de tráfego sem comprometer a performance.

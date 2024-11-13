@@ -4,7 +4,7 @@ kind: Deployment
 metadata:
   name: front-deployment
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: myapp
@@ -16,10 +16,10 @@ spec:
     spec:
       containers:
       #frontend container
-      - name: frontend-container
-        image: maurizb/guess-game-k8s-frontend:latest .
-        ports:
-        - containerPort: 80
+        - name: frontend-container
+          image: maurizb/guess-game-k8s-frontend:latest .
+          ports:
+            - containerPort: 80
   # estratégia de rollout
   strategy:
     type: RollingUpdate
@@ -28,17 +28,17 @@ spec:
       maxSurge: 1
 ---
 #service
-#apiVersion: v1
-#Kind: Service
-#metadata:
-#  name: myapp-service
-#  labels:
-#    app: myapp
-#spec:
-#  selector:
-#    app: myapp
-#  ports:
-#    - protocol: TCP
-#      port: 80
-#      targetPort: 80
-#  type: LoadBalancer
+apiVersion: v1
+Kind: Service
+metadata:
+  name: myapp-service
+  labels:
+    app: myapp
+spec:
+  selector:
+    app: myapp
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer

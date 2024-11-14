@@ -32,6 +32,7 @@ Para rodar o projeto, tenha o Docker Desktop aberto e certifique-se que a opçã
 kubectl apply -f frontend-deploy.yaml
 kubectl apply -f backend-deploy.yaml
 kubectl apply -f db-deploy.yaml
+kubectl apply -f hpa.yaml
 ```
 
 Isso irá subir os containers do jogo. A aplicação estará disponível em [http://localhost](http://localhost).
@@ -50,8 +51,9 @@ Para parar todos os containers e excluir os volumes, executar:
 
 ```bash
 kubectl delete deployment front-deployment
-kubectl delete deployment backend-deployment
+kubectl delete deployment backend
 kubectl delete deployment db-deployment
+kubectl delete hpa hpa-backend
 ```
 
 Isso irá desligar e remover todos os containers criados.

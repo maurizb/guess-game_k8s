@@ -16,20 +16,20 @@ spec:
     spec:
       containers: 
       #db container
-      - name: database-container
-        image: postgres
-        ports:
-        - containerPort: 5432
-        env:
-        - name: POSTGRES_PASSWORD
-          value: secretpass
-        volumeMounts:
-        - name: my-db-backup
-          mountPath: /var/lib/postgresql/data
+        - name: database-container
+          image: postgres
+          ports:
+          - containerPort: 5432
+          env:
+          - name: POSTGRES_PASSWORD
+            value: secretpass
+          volumeMounts:
+          - name: my-db-backup
+            mountPath: /var/lib/postgresql/data
       volumes:
-      - name: my-db-backup
-        persistentVolumeClaim:
-          claimName: my-db-backup
+        - name: my-db-backup
+          persistentVolumeClaim:
+            claimName: my-db-backup
 ---
 #define volumes
 apiVersion: v1
@@ -56,4 +56,3 @@ spec:
     - protocol: TCP
       port: 5432
       targetPort: 5432
-  type: LoadBalancer
